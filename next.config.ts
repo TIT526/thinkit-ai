@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Cloudflare Pages compatible
+  images: {
+    unoptimized: true,
+  },
+  experimental: {
+    // Ensure Node.js runtime for auth routes
+  },
 };
 
 export default nextConfig;
