@@ -1,10 +1,37 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { Brain } from "lucide-react";
+"use client";
 
-export const metadata: Metadata = { title: "Login" };
+import Link from "next/link";
+import { Brain, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    const form = e.currentTarget;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
+
+    const res = await signIn("credentials", { email, password, redirect: false });
+
+    setLoading(false);
+
+    if (res?.error) {
+      setError("Invalid email or password.");
+    } else {
+      router.push("/dashboard");
+      router.refresh();
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-[var(--background)]">
       <div className="w-full max-w-sm">
@@ -24,7 +51,13 @@ export default function LoginPage() {
         {/* Card */}
         <div className="rounded-2xl border border-[var(--border-color)] bg-[var(--card-bg)] p-7">
           <h1 className="text-lg font-bold mb-6">Sign in to your account</h1>
-          <form className="space-y-4">
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="px-3 py-2.5 rounded-lg bg-my-red/10 border border-my-red/20 text-sm text-my-red">
+                {error}
+              </div>
+            )}
             <div>
               <label className="block text-sm font-medium mb-1.5">Email</label>
               <input
@@ -49,9 +82,11 @@ export default function LoginPage() {
             </div>
             <button
               type="submit"
-              className="w-full py-2.5 rounded-lg bg-my-blue text-white text-sm font-semibold hover:bg-my-blue-light transition-colors mt-2"
+              disabled={loading}
+              className="w-full py-2.5 rounded-lg bg-my-blue text-white text-sm font-semibold hover:bg-my-blue-light transition-colors mt-2 flex items-center justify-center gap-2 disabled:opacity-60"
             >
-              Sign In
+              {loading && <Loader2 size={15} className="animate-spin" />}
+              {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
