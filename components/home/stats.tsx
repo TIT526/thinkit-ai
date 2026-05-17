@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 const stats = [
   { value: "6", label: "AI Products", suffix: "" },
   { value: "14", label: "Banks Supported", suffix: "+" },
-  { value: "100", label: "Free Forever", suffix: "%" },
+  { value: "✓", label: "Affordable Cost", suffix: "" },
   { value: "2.2", label: "AutoCount Compatible", suffix: "+" },
 ];
 
